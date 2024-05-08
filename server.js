@@ -1,42 +1,24 @@
 const express = require('express');
 const app = express();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+const authRoutes = require('./routes/authRoutes.js');
 
 app.use(express.json());
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/riviera', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => console.log('Connected to MongoDB'));
 
 app.get('/', (req, res) => {
     res.send('Welcome to the Riviera Spa API');
 });
 
-app.post('/api/signup', async (req, res) => {
-    const { firstName, lastName, username, password, email, barcode, birthday, phoneNumber, code } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
-
-    // Save the user to the database
-    // Example using Mongoose
-    const newUser = new UserActivation({ firstName, lastName, username, password: hashedPassword, email, barcode, birthday, phoneNumber, code });
-    await newUser.save();
-
-    res.status(201).json({ message: 'User has been created successfully! Welcome to Riviera Spa!'});
-});
-
-app.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
-
-    if (!user) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    const token = jwt.sign({ userId: user._id }, 'riviera_spa', { expiresIn: '1h' });
-    res.json({ token });
-});
+app.use('/api/auth', authRoutes);
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
