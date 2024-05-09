@@ -15,7 +15,7 @@ const customerSchema = new Schema({
         default: 'pending'
     },
     membershipStartDate: {
-        type: Data,
+        type: Date,
     },
     membershipEndDate: {
         type: Date,
