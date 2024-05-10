@@ -1,7 +1,9 @@
 ## May 9th, 2024
 
-- Beekeeper connection
-- 
+- Routes setup
+- Mongodb connection
+
+Today, I mostly worked on finishing up the routes for authentication. I want to test the API on localhost but I can't seem to make it show up. Tomorrow, I will attempt to resolve this.
 
 ## May 7th, 2024
 
