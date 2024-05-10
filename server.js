@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes.js');
+const signupRoute = require('./routes/signupRoute.js');
+const logoutRoute = require('./routes/logoutRoute.js');
 
 app.use(express.json());
 
@@ -19,6 +21,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/signup', signupRoute);
+app.use('/api/logout', logoutRoute);
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
