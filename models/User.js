@@ -6,12 +6,12 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
-    username: {
+    email: {
         type: String,
         required: true,
         unique: true,
     },
-    email: {
+    username: {
         type: String,
         required: true,
         unique: true,
@@ -20,11 +20,18 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
-    role: {
+    birthday: {
+        type: Date,
+        required: true,
+        set: value => value.toISOString().split('T')[0],
+    },
+    phoneNumber: {
         type: String,
-        enum: [
-            'Customer', 'Employee', 'Manager'
-        ],
+        required: true,
+    },
+    role: {
+        type: Schema.Types.ObjectId,
+        ref: 'Role',
         required: true,
     }
 });

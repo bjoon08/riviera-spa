@@ -1,6 +1,10 @@
+## May 15th, 2024
+
+I finally got the sign up endpoint to work on Insomnia, and I was able to create a route to see a list of users to confirm the created user. I am now able to signup, see the list of users and roles, login, and logout.
+
 ## May 13th, 2024
 
-
+I spent a majority of today figuring out how to get my database to create a user. My routes are fine, but it still seems to throw me a 404 error.
 
 ## May 9th, 2024
 
