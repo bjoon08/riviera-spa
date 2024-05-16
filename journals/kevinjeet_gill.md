@@ -1,6 +1,6 @@
 ## May 15th, 2024
 
-Add docker to project. Created Dockerfile and docker-compose.yml. Made edits throughout node-modules files to change "??=" into conditional assignments so we wouldn't get an error when doing docker compose up. 
+Add docker to project. Created Dockerfile and docker-compose.yml. Made edits throughout node-modules files to change "??=" into conditional assignments so we wouldn't get an error when doing docker compose up. Added react to the project.
 
 ## May 8th, 2024 
 
