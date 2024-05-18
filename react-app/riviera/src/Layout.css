@@ -1,0 +1,47 @@
+/* Layout.css */
+.navbar-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .navbar-container .nav-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: left;
+    padding: 10px;
+  }
+  
+  .navbar-container .nav-link img {
+    width: 40px; /* Set to the desired square size */
+    height: 40px; /* Set to the desired square size */
+    object-fit: cover; /* Ensures the image covers the area and maintains aspect ratio */
+  }
+  
+  .navbar-container .nav-link.active {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  @media (max-width: 767.98px) {
+    .navbar-container {
+      height: auto;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      z-index: 1000;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+  
+    .navbar-container .nav {
+      flex-direction: row;
+    }
+  
+    .navbar-container .nav-link {
+      flex: 1;
+      white-space: nowrap;
+    }
+  }
+  
