@@ -2,28 +2,25 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+
+// Routes
 const authRoutes = require('./routes/authRoutes.js');
 const signupRoute = require('./routes/signupRoute.js');
 const logoutRoute = require('./routes/logoutRoute.js');
-const User = require('./models/User.js');
+const userRoute = require('./routes/userRoute.js');
+
+// Models
+const User = require('./models/User');
 const Role = require('./models/Role.js');
 
-// Middleware to verify JWT token
-const verifyToken = (req, res, next) => {
-    const token = req.headers.authorization;
-    if (!token) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
+// Secret Key
+const secretKey = process.env.SECRET_KEY;
 
-    try {
-        const decoded = jwt.verify(token.split(' ')[1], secretKey);
-        req.user = decoded;
-        next();
-    } catch (error) {
-        return res.status(401).json({ message: 'Invalid token' });
-    }
-};
+// Middleware
+const verifyToken = require('./middleware/verifyToken');
+const authorize = require('./middleware/authorize');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -54,9 +51,10 @@ app.post('/test', (req, res) => {
 app.use('/signup', signupRoute);
 app.use('/auth', authRoutes);
 app.use('/logout', logoutRoute);
+app.use('/users', userRoute);
 
 // Get all users (PROTECTED)
-app.get('/users', verifyToken, async (req, res) => {
+app.get('/users', verifyToken, authorize('Employee', 'Manager'), async (req, res) => {
     try {
         const users = await User.find();
         res.status(200).json(users);
@@ -66,10 +64,32 @@ app.get('/users', verifyToken, async (req, res) => {
 });
 
 // Get all roles (PROTECTED)
-app.get('/roles', verifyToken, async (req, res) => {
+app.get('/roles', verifyToken, authorize('Employee', 'Manager'), async (req, res) => {
     try {
         const roles = await Role.find();
         res.status(200).json(roles);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Get user details (PROTECTED)
+app.get('/user/details', verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const user = await User.findById(userId, {});
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Return user details
+        res.status(200).json({
+            user: user.toObject(),
+            token: {
+                decodedToken: req.user,
+            },
+        });
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
     }

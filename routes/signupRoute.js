@@ -3,15 +3,33 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const User = require('../models/User.js');
 const Role = require('../models/Role.js');
+const Joi = require('joi');
+
+// Define Joi schema
+const signupSchema = Joi.object({
+    fullName: Joi.string().min(3).max(50).required(),
+    email: Joi.string().email().required(),
+    username: Joi.string().min(3).max(30).required(),
+    password: Joi.string().min(6).required(),
+    birthday: Joi.date().iso().required(),
+    phoneNumber: Joi.string().pattern(/^\(\d{3}\)\d{3}-\d{4}$/).required(), // Pattern for (xxx)xxx-xxxx format
+    roleName: Joi.string().required()
+});
 
 router.post('/', async (req, res) => {
-    const { fullName, email, username, password, birthday, phoneNumber, roleName } = req.body;
+    // Validate the request body against the schema
+    const { error, value } = signupSchema.validate(req.body);
+
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+    }
+
+    const { fullName, email, username, password, birthday, phoneNumber, roleName } = value;
 
     try {
         let role = await Role.findOne({ name: roleName });
         if (!role) {
-            role = new Role({ name: roleName });
-            await role.save();
+            return res.status(400).json({ message: 'Invalid role name' });
         }
 
         // Check if user already exists
@@ -32,6 +50,7 @@ router.post('/', async (req, res) => {
 
         res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
+        console.error('Signup Error:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });

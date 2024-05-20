@@ -1,17 +1,18 @@
 const express = require('express');
 const router = express.Router();
+const verifyToken = require('../middleware/verifyToken.js');
+const loggedInUsers = require('./loginRoute.js');
 
-router.post('/', (req, res) => {
-    // Check if the JWT token is present
-    if (!req.cookies.jwtToken) {
-        return res.status(400).json({ message: 'You are already logged out' });
+router.post('/', verifyToken, (req, res) => {
+    const username = req.user.userId;
+
+    // Clear the logged in user
+    if (loggedInUsers[username]) {
+        delete loggedInUsers[username];
+        return res.json({ message: 'Logout successful' });
+    } else {
+        return res.status(400).json({ message: 'You are already logged out!' });
     }
-
-    // Invalidate the JWT token
-    res.clearCookie('jwtToken');
-
-    // Send a sucess message
-    res.json({ message: 'Logout successful' });
 });
 
 module.exports = router;
