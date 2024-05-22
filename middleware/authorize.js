@@ -5,6 +5,8 @@ const authorize = (...allowedRoles) => {
             return res.status(401).json({ message: 'Unauthorized' });
         }
         if (!allowedRoles.includes(user.role)) {
+            console.log('User Role:', user.role);
+            console.log('Allowed Roles:', allowedRoles);
             return res.status(403).json({ message: 'Forbidden: Insufficient role' });
         }
         next();

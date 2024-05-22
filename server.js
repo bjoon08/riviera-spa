@@ -5,11 +5,14 @@ const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
-// Routes
-const authRoutes = require('./routes/authRoutes.js');
-const signupRoute = require('./routes/signupRoute.js');
-const logoutRoute = require('./routes/logoutRoute.js');
-const userRoute = require('./routes/userRoute.js');
+// Auth routes
+const authRoutes = require('./authRoutes/authRoutes.js');
+const signupRoute = require('./authRoutes/signupRoute.js');
+const logoutRoute = require('./authRoutes/logoutRoute.js');
+const userRoute = require('./authRoutes/userRoute.js');
+
+// User routes
+const roleRoute = require('./userRoutes/roleRoute.js');
 
 // Models
 const User = require('./models/User');
@@ -52,6 +55,7 @@ app.use('/signup', signupRoute);
 app.use('/auth', authRoutes);
 app.use('/logout', logoutRoute);
 app.use('/users', userRoute);
+app.use('/roles', roleRoute);
 
 // Get all users (PROTECTED)
 app.get('/users', verifyToken, authorize('Employee', 'Manager'), async (req, res) => {
@@ -63,15 +67,15 @@ app.get('/users', verifyToken, authorize('Employee', 'Manager'), async (req, res
     }
 });
 
-// Get all roles (PROTECTED)
-app.get('/roles', verifyToken, authorize('Employee', 'Manager'), async (req, res) => {
-    try {
-        const roles = await Role.find();
-        res.status(200).json(roles);
-    } catch (error) {
-        res.status(500).json({ message: 'Server error' });
-    }
-});
+// // Get all roles (PROTECTED)
+// app.get('/roles', verifyToken, authorize('Employee', 'Manager'), async (req, res) => {
+//     try {
+//         const roles = await Role.find();
+//         res.status(200).json(roles);
+//     } catch (error) {
+//         res.status(500).json({ message: 'Server error' });
+//     }
+// });
 
 // Get user details (PROTECTED)
 app.get('/user/details', verifyToken, async (req, res) => {

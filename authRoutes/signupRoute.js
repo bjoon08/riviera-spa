@@ -27,6 +27,9 @@ router.post('/', async (req, res) => {
     const { fullName, email, username, password, birthday, phoneNumber, roleName } = value;
 
     try {
+        const roles = await Role.findOne({});
+        console.log('Available Roles:', roles);
+
         let role = await Role.findOne({ name: roleName });
         if (!role) {
             return res.status(400).json({ message: 'Invalid role name' });
